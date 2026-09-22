@@ -1,3 +1,4 @@
+import Section from '../components/ui/Section.jsx'
 import CatalogSummary from '../components/products/CatalogSummary.jsx'
 import ProductList from '../components/products/ProductList.jsx'
 import { products, categories, sections } from '../data/products.js'
@@ -24,11 +25,10 @@ export default function HomePage() {
         <p>Перегляньте каталог товарів, їхню категорію, секцію та залишки.</p>
       </section>
 
-      <section id="catalog" aria-labelledby="catalog-title">
-        <h2 id="catalog-title">Каталог товарів</h2>
+      <Section id="catalog" title="Каталог товарів">
         <CatalogSummary total={catalog.length} />
         <ProductList items={catalog} />
-      </section>
+      </Section>
     </>
   )
 }
