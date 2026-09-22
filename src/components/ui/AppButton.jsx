@@ -1,7 +1,9 @@
+import Button from 'react-bootstrap/Button'
+
 export default function AppButton({ children, type = 'button', disabled = false }) {
   return (
-    <button type={type} className="app-button" disabled={disabled}>
+    <Button type={type} variant="primary" disabled={disabled}>
       {children}
-    </button>
+    </Button>
   )
 }
