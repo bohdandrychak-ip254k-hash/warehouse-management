@@ -36,6 +36,12 @@ section { margin-block: 1.5rem; }
   border-radius: 0.5rem;
   background: white;
 }
+.empty-state {
+  padding: 1rem;
+  border: 1px dashed #c7d2dc;
+  border-radius: 0.5rem;
+  color: #455b6b;
+}
 .path { color: #455b6b; font-size: 0.9rem; }
 .barcode { color: #6b7a85; font-size: 0.85rem; font-family: monospace; }
 .status { font-weight: 600; }
