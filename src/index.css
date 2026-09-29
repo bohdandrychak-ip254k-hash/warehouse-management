@@ -351,3 +351,36 @@ section { margin-block: 1.5rem; }
   border-radius: 0.5rem;
   background: #E8F5FD;
 }
+.order-columns {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.order-summary {
+  padding: 1rem;
+  border: 1px solid #CCE1EF;
+  border-radius: 0.5rem;
+  background: #E8F5FD;
+}
+.order-summary dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #689EC2;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.order-summary dd {
+  margin: 0;
+  font-weight: 600;
+}
+@media (max-width: 40rem) {
+  .order-columns { grid-template-columns: 1fr; }
+}

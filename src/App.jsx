@@ -30,7 +30,11 @@ export default function App() {
   return (
     <AppLayout title="Склад" links={navLinks}>
       <HomePage catalog={catalog} selectedId={selectedId} onSelect={setSelectedId} />
-      <OrderPage selectedProduct={selectedProduct} onClearSelection={() => setSelectedId(null)} />
+      <OrderPage
+          key={selectedId ?? 'empty'}
+          selectedProduct={selectedProduct}
+          onClearSelection={() => setSelectedId(null)}
+        />
     </AppLayout>
   )
 }
