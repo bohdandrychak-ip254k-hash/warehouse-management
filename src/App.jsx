@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppLayout from './components/layout/AppLayout.jsx'
 import HomePage from './pages/HomePage.jsx'
 import OrderPage from './pages/OrderPage.jsx'
@@ -27,14 +27,25 @@ export default function App() {
   const catalog = products.map(enrichProduct)
   const selectedProduct = catalog.find((item) => item.id === selectedId) ?? null
 
+  const title = selectedProduct ? `Склад: ${selectedProduct.name}` : 'Склад'
+
+  useEffect(() => {
+    const previousTitle = document.title
+    document.title = title
+
+    return () => {
+      document.title = previousTitle
+    }
+  }, [title])
+
   return (
     <AppLayout title="Склад" links={navLinks}>
       <HomePage catalog={catalog} selectedId={selectedId} onSelect={setSelectedId} />
       <OrderPage
-          key={selectedId ?? 'empty'}
-          selectedProduct={selectedProduct}
-          onClearSelection={() => setSelectedId(null)}
-        />
+        key={selectedId ?? 'empty'}
+        selectedProduct={selectedProduct}
+        onClearSelection={() => setSelectedId(null)}
+      />
     </AppLayout>
   )
 }
