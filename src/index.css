@@ -169,3 +169,179 @@ section { margin-block: 1.5rem; }
 @media (max-width: 30rem) {
   .attribute-list { grid-template-columns: 1fr; }
 }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+  margin-block: 1rem;
+}
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #455b6b;
+}
+.filters input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #c7d2dc;
+  border-radius: 0.375rem;
+  font: inherit;
+}
+.checkbox-field {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}.filter-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+}
+.filter-group legend {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+.filter-group .checkbox-field {
+  margin-block: 0.375rem;
+}
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 43, 58, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 50;
+  animation: overlay-fade 0.15s ease-out;
+}
+@keyframes overlay-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-window {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 45px rgba(23, 43, 58, 0.25);
+  max-width: 34rem;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0;
+  animation: modal-rise 0.18s ease-out;
+}
+@keyframes modal-rise {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e9ed;
+  position: sticky;
+  top: 0;
+  background: white;
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.modal-close {
+  background: #f4f6f8;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #455b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover {
+  background: #e5e9ed;
+}
+.modal-close:focus-visible {
+  outline: 3px solid #075a94;
+  outline-offset: 2px;
+}
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Групи фільтрів */
+.filter-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+.filter-group:last-of-type {
+  margin-bottom: 1.75rem;
+}
+.filter-group legend {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7a85;
+  margin-bottom: 0.75rem;
+  padding: 0;
+}
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid #c7d2dc;
+  border-radius: 999px;
+  background: white;
+  color: #172b3a;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+.filter-chip:hover {
+  border-color: #075a94;
+  background: #f4f8fb;
+}
+.filter-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.filter-chip:has(input:checked) {
+  background: #075a94;
+  border-color: #075a94;
+  color: white;
+  font-weight: 600;
+}
+.filter-chip:has(input:focus-visible) {
+  outline: 3px solid #075a94;
+  outline-offset: 2px;
+}.attribute-row {
+  padding: 0.5rem 0;
+}
+.attribute-row dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.attribute-row dd {
+  font-size: 1rem;
+  font-weight: 600;
+}

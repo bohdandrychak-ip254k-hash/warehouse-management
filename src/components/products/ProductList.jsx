@@ -1,9 +1,9 @@
 import ProductCard from './ProductCard.jsx'
 import EmptyState from '../ui/EmptyState.jsx'
 
-export default function ProductList({ items }) {
+export default function ProductList({ items, emptyMessage = 'Товари ще не додано.' }) {
   if (items.length === 0) {
-    return <EmptyState message="Товари ще не додано." />
+    return <EmptyState message={emptyMessage} />
   }
 
   return (
