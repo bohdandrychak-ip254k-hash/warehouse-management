@@ -1,9 +1,26 @@
-import Button from 'react-bootstrap/Button'
-
-export default function AppButton({ children, type = 'button', disabled = false }) {
+export default function AppButton({
+  children,
+  type = 'button',
+  variant = 'primary',
+  disabled = false,
+  onClick,
+  'aria-pressed': ariaPressed,
+  'aria-expanded': ariaExpanded,
+  'aria-controls': ariaControls,
+  'aria-haspopup': ariaHaspopup,
+}) {
   return (
-    <Button type={type} variant="primary" disabled={disabled}>
+    <button
+      type={type}
+      className={`app-button app-button-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
+      aria-pressed={ariaPressed}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
+      aria-haspopup={ariaHaspopup}
+    >
       {children}
-    </Button>
+    </button>
   )
 }

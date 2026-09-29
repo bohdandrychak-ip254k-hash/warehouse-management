@@ -5,11 +5,11 @@ export const sections = [
 ]
 
 export const categories = [
-  { id: 'cat-1', name: 'Ноутбуки', sectionId: 'sec-1' },
-  { id: 'cat-2', name: 'Ручки', sectionId: 'sec-2' },
-  { id: 'cat-3', name: 'Зошити', sectionId: 'sec-2' },
-  { id: 'cat-4', name: 'Фантастика', sectionId: 'sec-3' },
-  { id: 'cat-5', name: 'Художні', sectionId: 'sec-3' },
+  { id: 'cat-1', name: 'Ноутбуки' },
+  { id: 'cat-2', name: 'Ручки' },
+  { id: 'cat-3', name: 'Зошити' },
+  { id: 'cat-4', name: 'Фантастика' },
+  { id: 'cat-5', name: 'Художні' },
 ]
 
 export const products = [
@@ -18,26 +18,44 @@ export const products = [
     barcode: '4820001000012',
     name: 'Ноутбук Lenovo ThinkPad',
     categoryId: 'cat-1',
+    sectionId: 'sec-1',
     quantity: 12,
     unit: 'шт.',
-    supplier: 'ТОВ "Техно Плюс"',
+    attributes: {
+      "Оперативна пам'ять": '16GB',
+      Процесор: 'Intel Core i7',
+      Екран: '15.6"',
+    },
+    description: '14" ноутбук для офісних завдань, SSD 512 ГБ.',
   },
   {
     id: 'prod-002',
     barcode: '4820002000029',
     name: 'Ручка кулькова синя',
     categoryId: 'cat-2',
+    sectionId: 'sec-2',
     quantity: 3,
     unit: 'упак.',
-    supplier: 'ФОП Іванов',
+    attributes: {
+      Колір: 'синій',
+      'Товщина лінії': '0.7 мм',
+      Чорнило: 'олійне',
+    },
+    description: 'Упаковка 10 шт., чорнило на масляній основі.',
   },
   {
     id: 'prod-003',
     barcode: '4820003000036',
     name: 'Роман "Дюна"',
     categoryId: 'cat-4',
+    sectionId: 'sec-3',
     quantity: 0,
     unit: 'шт.',
-    supplier: 'Видавництво "Клуб"',
+    attributes: {
+      Сторінок: 412,
+      Обкладинка: 'тверда',
+      Мова: 'українська',
+    },
+    description: 'Фантастичний роман Френка Герберта, видання 2021 року.',
   },
 ]
