@@ -1,66 +1,28 @@
-import { useState } from 'react'
 import Section from '../components/ui/Section.jsx'
 import CatalogSummary from '../components/products/CatalogSummary.jsx'
 import ProductList from '../components/products/ProductList.jsx'
 import FiltersModal from '../components/products/FiltersModal.jsx'
 import AppButton from '../components/ui/AppButton.jsx'
+import useProductFilters from '../hooks/useProductFilters.js'
 import { sections, categories } from '../data/products.js'
-
-function matchesQuery(product, query) {
-  const normalized = query.trim().toLowerCase()
-  if (normalized === '') return true
-  return (
-    product.name.toLowerCase().includes(normalized) ||
-    product.barcode.includes(normalized)
-  )
-}
+import { useState } from 'react'
 
 export default function HomePage({ catalog, selectedId, onSelect }) {
-  const [query, setQuery] = useState('')
-  const [lowStockOnly, setLowStockOnly] = useState(false)
-  const [selectedSectionIds, setSelectedSectionIds] = useState(() => new Set())
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState(() => new Set())
   const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const visibleProducts = catalog.filter((item) => {
-    const matchesSection = selectedSectionIds.size === 0 || selectedSectionIds.has(item.sectionId)
-    const matchesCategory = selectedCategoryIds.size === 0 || selectedCategoryIds.has(item.categoryId)
-    return (
-      matchesQuery(item, query) &&
-      (!lowStockOnly || item.quantity <= 5) &&
-      matchesSection &&
-      matchesCategory
-    )
-  })
-
-  const filtersActive =
-    query.trim() !== '' ||
-    lowStockOnly ||
-    selectedSectionIds.size > 0 ||
-    selectedCategoryIds.size > 0
-
-  function handleReset() {
-    setQuery('')
-    setLowStockOnly(false)
-    setSelectedSectionIds(new Set())
-    setSelectedCategoryIds(new Set())
-  }
-
-  function toggleSection(id) {
-    setSelectedSectionIds((previous) => {
-      const next = new Set(previous)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
-  }
-
-  function toggleCategory(id) {
-    setSelectedCategoryIds((previous) => {
-      const next = new Set(previous)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
-  }
+  const {
+    query,
+    setQuery,
+    lowStockOnly,
+    setLowStockOnly,
+    selectedSectionIds,
+    selectedCategoryIds,
+    toggleSection,
+    toggleCategory,
+    visibleProducts,
+    filtersActive,
+    resetFilters,
+  } = useProductFilters(catalog)
 
   const emptyMessage = filtersActive
     ? 'За заданими умовами товарів не знайдено.'
@@ -99,7 +61,7 @@ export default function HomePage({ catalog, selectedId, onSelect }) {
             Фільтри{filtersActive && ' •'}
           </AppButton>
 
-          <AppButton variant="secondary" onClick={handleReset} disabled={!filtersActive}>
+          <AppButton variant="secondary" onClick={resetFilters} disabled={!filtersActive}>
             Скинути фільтри
           </AppButton>
         </div>
