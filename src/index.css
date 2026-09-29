@@ -345,3 +345,19 @@ section { margin-block: 1.5rem; }
   font-size: 1rem;
   font-weight: 600;
 }
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-block: 0.75rem;
+}
+.selection-note {
+  color: #176139;
+  font-weight: 600;
+}
+.selected-product {
+  margin-block: 1rem;
+  padding: 0.75rem;
+  border: 1px dashed #c7d2dc;
+  border-radius: 0.5rem;
+}

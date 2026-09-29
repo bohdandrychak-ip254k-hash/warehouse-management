@@ -4,38 +4,24 @@ import CatalogSummary from '../components/products/CatalogSummary.jsx'
 import ProductList from '../components/products/ProductList.jsx'
 import FiltersModal from '../components/products/FiltersModal.jsx'
 import AppButton from '../components/ui/AppButton.jsx'
-import { products, categories, sections } from '../data/products.js'
-
-function enrichProduct(product) {
-  const category = categories.find((c) => c.id === product.categoryId)
-  const section = sections.find((s) => s.id === product.sectionId)
-
-  return {
-    ...product,
-    categoryName: category?.name ?? 'Без категорії',
-    sectionName: section?.name ?? 'Без секції',
-  }
-}
+import { sections, categories } from '../data/products.js'
 
 function matchesQuery(product, query) {
   const normalized = query.trim().toLowerCase()
-  if (normalized === '') {
-    return true
-  }
+  if (normalized === '') return true
   return (
     product.name.toLowerCase().includes(normalized) ||
     product.barcode.includes(normalized)
   )
 }
 
-export default function HomePage() {
+export default function HomePage({ catalog, selectedId, onSelect }) {
   const [query, setQuery] = useState('')
   const [lowStockOnly, setLowStockOnly] = useState(false)
   const [selectedSectionIds, setSelectedSectionIds] = useState(() => new Set())
   const [selectedCategoryIds, setSelectedCategoryIds] = useState(() => new Set())
   const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const catalog = products.map(enrichProduct)
   const visibleProducts = catalog.filter((item) => {
     const matchesSection = selectedSectionIds.size === 0 || selectedSectionIds.has(item.sectionId)
     const matchesCategory = selectedCategoryIds.size === 0 || selectedCategoryIds.has(item.categoryId)
@@ -63,11 +49,7 @@ export default function HomePage() {
   function toggleSection(id) {
     setSelectedSectionIds((previous) => {
       const next = new Set(previous)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
+      next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
   }
@@ -75,11 +57,7 @@ export default function HomePage() {
   function toggleCategory(id) {
     setSelectedCategoryIds((previous) => {
       const next = new Set(previous)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
+      next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
   }
@@ -117,11 +95,7 @@ export default function HomePage() {
             Лише дефіцитні
           </label>
 
-          <AppButton
-            variant="secondary"
-            aria-haspopup="dialog"
-            onClick={() => setFiltersOpen(true)}
-          >
+          <AppButton variant="secondary" aria-haspopup="dialog" onClick={() => setFiltersOpen(true)}>
             Фільтри{filtersActive && ' •'}
           </AppButton>
 
@@ -131,7 +105,12 @@ export default function HomePage() {
         </div>
 
         <CatalogSummary total={visibleProducts.length} caption="Знайдено товарів" />
-        <ProductList items={visibleProducts} emptyMessage={emptyMessage} />
+        <ProductList
+          items={visibleProducts}
+          emptyMessage={emptyMessage}
+          selectedId={selectedId}
+          onSelect={onSelect}
+        />
       </Section>
 
       {filtersOpen && (

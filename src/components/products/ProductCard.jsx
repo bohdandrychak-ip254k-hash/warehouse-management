@@ -4,7 +4,7 @@ import AttributeList from './AttributeList.jsx'
 import AppButton from '../ui/AppButton.jsx'
 import Modal from '../ui/Modal.jsx'
 
-export default function ProductCard({ item }) {
+export default function ProductCard({ item, selected, onSelect }) {
   const [detailsOpen, setDetailsOpen] = useState(false)
 
   return (
@@ -15,13 +15,17 @@ export default function ProductCard({ item }) {
       <p>Кількість: {item.quantity} {item.unit}</p>
       <AvailabilityBadge quantity={item.quantity} />
 
-      <AppButton
-        variant="secondary"
-        aria-haspopup="dialog"
-        onClick={() => setDetailsOpen(true)}
-      >
-        Детальніше
-      </AppButton>
+      <div className="card-actions">
+        <AppButton variant="secondary" aria-haspopup="dialog" onClick={() => setDetailsOpen(true)}>
+          Детальніше
+        </AppButton>
+
+        <AppButton aria-pressed={selected} onClick={() => onSelect(item.id)}>
+          {selected ? 'Обрано' : 'Обрати для замовлення'}
+        </AppButton>
+      </div>
+
+      {selected && <p className="selection-note">Додано до замовлення нижче.</p>}
 
       {detailsOpen && (
         <Modal title={item.name} onClose={() => setDetailsOpen(false)}>
