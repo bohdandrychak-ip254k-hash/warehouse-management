@@ -59,7 +59,7 @@ export default function WelcomePage() {
           <FeatureCard
             icon="🧾"
             title="Замовлення"
-            description="Дефіцитні товари та чернетка замовлення постачальнику."
+            description="Створення, редагування й видалення замовлень постачальникам."
             to="/orders"
           />
           <FeatureCard

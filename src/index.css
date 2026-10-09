@@ -681,3 +681,94 @@ a.app-button {
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
+.field-hint {
+  margin: 0;
+  color: #455b6b;
+  font-size: 0.85rem;
+}
+.field-error {
+  margin: 0;
+  color: #9c1c24;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+[aria-invalid="true"] {
+  border-color: #9c1c24;
+}
+.form-alert {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #9c1c24;
+  background: #fbeaec;
+  color: #9c1c24;
+  font-weight: 600;
+}
+.form-field textarea {
+  resize: vertical;
+}
+.details-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+  margin: 1rem 0;
+}
+.details-list dt {
+  color: #689EC2;
+  font-weight: 600;
+}
+.details-list dd {
+  margin: 0;
+  font-weight: 600;
+}
+.orders-table td,
+main h1 {
+  overflow-wrap: anywhere;
+}
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.app-button-small {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+.app-button-danger {
+  background: white;
+  color: #9c1c24;
+  border-color: #9c1c24;
+}
+.app-button-danger:hover:not(:disabled) {
+  background: #fbeaec;
+}
+.row-actions .app-button {
+  white-space: nowrap;
+}
+.local-note {
+  margin: 0 0 0.5rem;
+  color: #455b6b;
+  font-size: 0.85rem;
+}
+.operation-notice {
+  margin-block: 0.5rem;
+}
+.operation-notice p:empty {
+  margin: 0;
+}
+.operation-notice.has-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-left: 4px solid #176139;
+  border-radius: 0.25rem;
+  background: #eaf6ee;
+}
+.operation-notice.has-notice p {
+  margin: 0;
+  color: #176139;
+  font-weight: 600;
+}

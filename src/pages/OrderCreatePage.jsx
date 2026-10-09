@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router'
 import PageHeading from '../components/ui/PageHeading.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import useProductSelection from '../hooks/useProductSelection.js'
+import useOrders from '../hooks/useOrders.js'
 import OrderEditor from './OrderEditor.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 
@@ -9,6 +10,7 @@ export default function OrderCreatePage({ catalog }) {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { selectedId, clearSelection } = useProductSelection()
+  const { createOrder } = useOrders()
   const productId = searchParams.get('productId')
 
   if (productId === null) {
@@ -44,6 +46,14 @@ export default function OrderCreatePage({ catalog }) {
     )
   }
 
+  function handleSave(input) {
+    const result = createOrder(input)
+    if (result.ok) {
+      navigate(`/orders/${encodeURIComponent(result.record.id)}`, { replace: true })
+    }
+    return result
+  }
+
   function handleCancel() {
     clearSelection()
     navigate('/products', { replace: true })
@@ -54,6 +64,8 @@ export default function OrderCreatePage({ catalog }) {
       key={`new-${product.id}`}
       title="Нове замовлення"
       product={product}
+      onSave={handleSave}
+      submitLabel="Створити замовлення"
       onCancel={handleCancel}
       cancelLabel="Скасувати чернетку й очистити вибір"
     />

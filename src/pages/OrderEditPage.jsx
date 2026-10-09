@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from 'react-router'
+import useOrders from '../hooks/useOrders.js'
 import OrderEditor from './OrderEditor.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 
-export default function OrderEditPage({ orders, catalog }) {
+export default function OrderEditPage({ catalog }) {
   const { orderId } = useParams()
   const navigate = useNavigate()
+  const { orders, updateOrder } = useOrders()
   const order = orders.find((entry) => entry.id === orderId)
 
   if (!order) {
@@ -24,11 +26,21 @@ export default function OrderEditPage({ orders, catalog }) {
     return (
       <NotFoundPage
         title="Товар замовлення відсутній"
-        message="Демонстраційний запис посилається на товар, якого немає в каталозі."
+        message="Запис посилається на товар, якого немає в каталозі."
         backTo="/orders"
         backLabel="До списку замовлень"
       />
     )
+  }
+
+  const detailsPath = `/orders/${encodeURIComponent(order.id)}`
+
+  function handleSave(input) {
+    const result = updateOrder(order.id, input)
+    if (result.ok) {
+      navigate(`/orders/${encodeURIComponent(result.record.id)}`, { replace: true })
+    }
+    return result
   }
 
   return (
@@ -41,7 +53,9 @@ export default function OrderEditPage({ orders, catalog }) {
         supplier: order.supplier,
         comment: order.comment,
       }}
-      onCancel={() => navigate('/orders')}
+      onSave={handleSave}
+      submitLabel="Зберегти зміни"
+      onCancel={() => navigate(detailsPath)}
     />
   )
 }
