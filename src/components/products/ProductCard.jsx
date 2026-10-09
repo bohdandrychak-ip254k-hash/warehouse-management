@@ -1,11 +1,9 @@
-import { useState } from 'react'
+import { Link } from 'react-router'
 import AvailabilityBadge from './AvailabilityBadge.jsx'
-import AttributeList from './AttributeList.jsx'
 import AppButton from '../ui/AppButton.jsx'
-import Modal from '../ui/Modal.jsx'
 
 export default function ProductCard({ item, selected, onSelect }) {
-  const [detailsOpen, setDetailsOpen] = useState(false)
+  const orderPath = `/orders/new?${new URLSearchParams({ productId: item.id })}`
 
   return (
     <article className="product-card">
@@ -16,22 +14,19 @@ export default function ProductCard({ item, selected, onSelect }) {
       <AvailabilityBadge quantity={item.quantity} />
 
       <div className="card-actions">
-        <AppButton variant="secondary" aria-haspopup="dialog" onClick={() => setDetailsOpen(true)}>
+        <Link to={`/products/${item.id}`} className="app-button app-button-secondary">
           Детальніше
-        </AppButton>
+        </Link>
 
         <AppButton aria-pressed={selected} onClick={() => onSelect(item.id)}>
           {selected ? 'Обрано' : 'Обрати для замовлення'}
         </AppButton>
       </div>
 
-      {selected && <p className="selection-note">Додано до замовлення нижче.</p>}
-
-      {detailsOpen && (
-        <Modal title={item.name} onClose={() => setDetailsOpen(false)}>
-          <AttributeList attributes={item.attributes} />
-          <p className="modal-description">{item.description}</p>
-        </Modal>
+      {selected && (
+        <p className="selection-note">
+          Обрано останнім. <Link to={orderPath}>Підготувати замовлення</Link>
+        </p>
       )}
     </article>
   )

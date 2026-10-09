@@ -1,10 +1,13 @@
+import { Outlet } from 'react-router'
 import SiteHeader from './SiteHeader.jsx'
 
-export default function AppLayout({ title, links, children }) {
+export default function AppLayout({ title, links }) {
   return (
     <>
       <SiteHeader title={title} links={links} />
-      <main>{children}</main>
+      <main>
+        <Outlet />
+      </main>
       <footer>Навчальний проєкт. Початковий каталог.</footer>
     </>
   )

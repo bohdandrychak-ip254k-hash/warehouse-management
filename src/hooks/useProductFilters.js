@@ -1,10 +1,17 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router'
+
+function readIds(searchParams, name) {
+  const raw = searchParams.get(name) ?? ''
+  return new Set(raw.split(',').filter(Boolean))
+}
 
 export default function useProductFilters(catalog) {
-  const [query, setQuery] = useState('')
-  const [lowStockOnly, setLowStockOnly] = useState(false)
-  const [selectedSectionIds, setSelectedSectionIds] = useState(() => new Set())
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState(() => new Set())
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const query = searchParams.get('q') ?? ''
+  const lowStockOnly = searchParams.get('lowStock') === '1'
+  const selectedSectionIds = readIds(searchParams, 'sections')
+  const selectedCategoryIds = readIds(searchParams, 'categories')
 
   const normalizedQuery = query.trim().toLocaleLowerCase('uk')
 
@@ -25,27 +32,58 @@ export default function useProductFilters(catalog) {
     selectedSectionIds.size > 0 ||
     selectedCategoryIds.size > 0
 
+  function setQuery(value) {
+    const next = new URLSearchParams(searchParams)
+    if (value === '') {
+      next.delete('q')
+    } else {
+      next.set('q', value)
+    }
+    setSearchParams(next, { replace: true })
+  }
+
+  function setLowStockOnly(value) {
+    const next = new URLSearchParams(searchParams)
+    if (value) {
+      next.set('lowStock', '1')
+    } else {
+      next.delete('lowStock')
+    }
+    setSearchParams(next)
+  }
+
+  function toggleId(name, id) {
+    const ids = readIds(searchParams, name)
+    if (ids.has(id)) {
+      ids.delete(id)
+    } else {
+      ids.add(id)
+    }
+
+    const next = new URLSearchParams(searchParams)
+    if (ids.size === 0) {
+      next.delete(name)
+    } else {
+      next.set(name, [...ids].join(','))
+    }
+    setSearchParams(next)
+  }
+
   function toggleSection(id) {
-    setSelectedSectionIds((previous) => {
-      const next = new Set(previous)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
+    toggleId('sections', id)
   }
 
   function toggleCategory(id) {
-    setSelectedCategoryIds((previous) => {
-      const next = new Set(previous)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
+    toggleId('categories', id)
   }
 
   function resetFilters() {
-    setQuery('')
-    setLowStockOnly(false)
-    setSelectedSectionIds(new Set())
-    setSelectedCategoryIds(new Set())
+    const next = new URLSearchParams(searchParams)
+    next.delete('q')
+    next.delete('lowStock')
+    next.delete('sections')
+    next.delete('categories')
+    setSearchParams(next)
   }
 
   return {
