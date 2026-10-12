@@ -41,7 +41,7 @@ export default function OrderTable({ orders, items, suppliers, onDelete }) {
                     })}
                   </ul>
                 </td>
-                <td>{supplier?.name ?? '—'}</td>
+                <td>{supplier?.name ?? (order.kind === 'form' ? 'Без постачальника' : '—')}</td>
                 <td>{order.status}</td>
                 <td>
                   <div className="row-actions">

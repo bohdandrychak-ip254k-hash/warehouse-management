@@ -44,11 +44,11 @@ function AppRoutes({ baseCatalog }) {
       <Route element={<AppLayout title="Склад" links={navLinks} />}>
         <Route index element={<WelcomePage catalog={catalog} />} />
         <Route path="products" element={<CatalogContainer catalog={catalog} />} />
-        <Route path="products/:productId" element={<ProductDetailsPage catalog={catalog} />} />
+        <Route path="products/:productId" element={<ProductDetailsPage catalog={catalog} suppliers={suppliers} />} />
 
         <Route path="orders" element={<OrdersLayout />}>
           <Route index element={<OrdersPage catalog={catalog} suppliers={suppliers} />} />
-          <Route path="new" element={<OrderCreatePage catalog={catalog} />} />
+          <Route path="new" element={<OrderCreatePage catalog={catalog} suppliers={suppliers} />} />
           <Route path="restock" element={<RestockPage catalog={catalog} suppliers={suppliers} />} />
           <Route path=":orderId" element={<OrderDetailsPage catalog={catalog} suppliers={suppliers} />} />
           <Route path=":orderId/edit" element={<OrderEditPage catalog={catalog} />} />

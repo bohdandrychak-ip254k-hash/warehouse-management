@@ -76,27 +76,36 @@ export function validateOrder(input, { products, suppliers }) {
     if (rawItems.length !== 1) {
       errors.items = 'Просте замовлення має містити рівно один товар.'
     }
-  } else {
-    if (!suppliers.some((supplier) => supplier.id === supplierId)) {
-      errors.supplierId = 'Виберіть постачальника зі списку.'
-    }
-    if (rawItems.length === 0) {
-      errors.items = 'Додайте до форми хоча б один товар.'
-    }
-  }
-
-  const seen = new Set()
-  rawItems.forEach((rawItem, index) => {
-    const result = validateOrderItem(rawItem ?? {}, products)
-    if (!result.ok) {
-      itemErrors[index] = result.errors
-    } else if (seen.has(result.value.productId)) {
-      itemErrors[index] = { productId: 'Цей товар уже є в замовленні.' }
     } else {
-      seen.add(result.value.productId)
-      values.push(result.value)
+      if (supplierId !== null && !suppliers.some((supplier) => supplier.id === supplierId)) {
+        errors.supplierId = 'Виберіть постачальника зі списку.'
+      }
+      if (rawItems.length === 0) {
+        errors.items = 'Додайте до форми хоча б один товар.'
+      }
     }
-  })
+
+    const checkSupplies = kind === ORDER_KIND.form
+      && supplierId !== null
+      && suppliers.some((supplier) => supplier.id === supplierId)
+    const supplies = (productId) => (
+      (products.find((product) => product.id === productId)?.supplierIds ?? []).includes(supplierId)
+    )
+
+    const seen = new Set()
+    rawItems.forEach((rawItem, index) => {
+      const result = validateOrderItem(rawItem ?? {}, products)
+      if (!result.ok) {
+        itemErrors[index] = result.errors
+      } else if (seen.has(result.value.productId)) {
+        itemErrors[index] = { productId: 'Цей товар уже є в замовленні.' }
+      } else if (checkSupplies && !supplies(result.value.productId)) {
+        itemErrors[index] = { productId: 'Цей постачальник не постачає цей товар.' }
+      } else {
+        seen.add(result.value.productId)
+        values.push(result.value)
+      }
+    })
 
   if (Object.keys(itemErrors).length > 0 && !errors.items) {
     errors.items = 'Виправте помилки в позиціях замовлення.'

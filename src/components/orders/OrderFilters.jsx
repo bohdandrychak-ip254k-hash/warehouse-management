@@ -17,7 +17,7 @@ export default function OrderFilters({
       <FormField
         id="orders-query"
         label="Пошук у замовленнях"
-        hint="Номер, товар, постачальник або коментар."
+        
       >
         <input
           id="orders-query"
@@ -25,6 +25,7 @@ export default function OrderFilters({
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           aria-describedby="orders-query-hint"
+          placeholder='Номер, товар, постачальник або коментар'
         />
       </FormField>
 

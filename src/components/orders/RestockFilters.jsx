@@ -7,13 +7,16 @@ export default function RestockFilters({
   show,
   section,
   category,
+  supplier,
   sections,
   categories,
+  suppliers,
   canReset,
   onQueryChange,
   onShowChange,
   onSectionChange,
   onCategoryChange,
+  onSupplierChange,
   onReset,
 }) {
   return (
@@ -21,7 +24,6 @@ export default function RestockFilters({
       <FormField
         id="restock-query"
         label="Пошук товару"
-        hint="Назва або штрихкод."
       >
         <input
           id="restock-query"
@@ -29,6 +31,7 @@ export default function RestockFilters({
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           aria-describedby="restock-query-hint"
+          placeholder='Назва або штрихкод'
         />
       </FormField>
 
@@ -65,6 +68,23 @@ export default function RestockFilters({
         >
           <option value="">Усі категорії</option>
           {categories.map((entry) => (
+            <option key={entry.id} value={entry.id}>{entry.name}</option>
+          ))}
+        </select>
+      </FormField>
+
+      <FormField
+        id="restock-supplier"
+        label="Постачальник форми"
+      >
+        <select
+          id="restock-supplier"
+          value={supplier}
+          onChange={(event) => onSupplierChange(event.target.value)}
+          aria-describedby="restock-supplier-hint"
+        >
+          <option value="">Без постачальника (усі товари)</option>
+          {suppliers.map((entry) => (
             <option key={entry.id} value={entry.id}>{entry.name}</option>
           ))}
         </select>

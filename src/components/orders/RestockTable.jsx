@@ -5,7 +5,7 @@ function singleOrderPath(productId) {
   return `/orders/new?${new URLSearchParams({ productId })}`
 }
 
-export default function RestockTable({ products, selectedIds, onToggle }) {
+export default function RestockTable({ products, suppliers, selectedIds, onToggle }) {
   return (
     <div className="table-scroll">
       <table className="restock-table">
@@ -18,6 +18,7 @@ export default function RestockTable({ products, selectedIds, onToggle }) {
             <th scope="col">Замовлено</th>
             <th scope="col">Разом</th>
             <th scope="col">Статус</th>
+            <th scope="col">Постачальники</th>
             <th scope="col">Дія</th>
           </tr>
         </thead>
@@ -25,6 +26,9 @@ export default function RestockTable({ products, selectedIds, onToggle }) {
           {products.map((product) => {
             const ordered = product.ordered ?? 0
             const selected = selectedIds.has(product.id)
+            const supplierNames = (product.supplierIds ?? [])
+              .map((id) => suppliers.find((entry) => entry.id === id)?.name)
+              .filter(Boolean)
 
             return (
               <tr key={product.id} className={selected ? 'row-selected' : undefined}>
@@ -46,6 +50,7 @@ export default function RestockTable({ products, selectedIds, onToggle }) {
                 <td>
                   <AvailabilityBadge quantity={product.quantity} ordered={ordered} />
                 </td>
+                <td>{supplierNames.length > 0 ? supplierNames.join('; ') : '—'}</td>
                 <td>
                   <Link
                     to={singleOrderPath(product.id)}

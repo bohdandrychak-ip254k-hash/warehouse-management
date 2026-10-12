@@ -9,7 +9,7 @@ import useProductSelection from '../hooks/useProductSelection.js'
 import NotFoundPage from './NotFoundPage.jsx'
 import { sales } from '../data/sales.js'
 
-export default function ProductDetailsPage({ catalog }) {
+export default function ProductDetailsPage({ catalog, suppliers }) {
   const { productId } = useParams()
   const navigate = useNavigate()
   const { selectProduct } = useProductSelection()
@@ -27,6 +27,9 @@ export default function ProductDetailsPage({ catalog }) {
   }
 
   const productSales = sales.filter((sale) => sale.productId === product.id)
+  const supplierNames = (product.supplierIds ?? [])
+    .map((id) => suppliers.find((entry) => entry.id === id)?.name)
+    .filter(Boolean)
 
   function handlePrepareOrder() {
     selectProduct(product.id)
@@ -47,6 +50,7 @@ export default function ProductDetailsPage({ catalog }) {
           <p>Наявно: {product.quantity} {product.unit}</p>
           <p>Замовлено: {product.ordered ?? 0} {product.unit}</p>
           <p>Разом: {product.quantity + (product.ordered ?? 0)} {product.unit}</p>
+          <p>Постачальники: {supplierNames.length > 0 ? supplierNames.join('; ') : 'не вказано'}</p>
           <AvailabilityBadge quantity={product.quantity} ordered={product.ordered} />
           <AppButton onClick={handlePrepareOrder}>Підготувати замовлення</AppButton>
         </div>

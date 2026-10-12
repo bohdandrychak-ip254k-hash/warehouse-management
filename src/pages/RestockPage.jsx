@@ -1,9 +1,8 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeading from '../components/ui/PageHeading.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import AppButton from '../components/ui/AppButton.jsx'
-import FormField from '../components/ui/FormField.jsx'
 import RestockFilters from '../components/orders/RestockFilters.jsx'
 import RestockTable from '../components/orders/RestockTable.jsx'
 import useRestockFilters from '../hooks/useRestockFilters.js'
@@ -11,14 +10,22 @@ import { sections, categories } from '../data/products.js'
 
 export default function RestockPage({ catalog, suppliers }) {
   const navigate = useNavigate()
-  const filters = useRestockFilters(catalog, sections, categories)
+  const filters = useRestockFilters(catalog, sections, categories, suppliers)
   const [selectedIds, setSelectedIds] = useState(() => new Set())
-  const [supplierId, setSupplierId] = useState('')
   const [formError, setFormError] = useState('')
-  const supplierRef = useRef(null)
 
-  const names = new Map(catalog.map((product) => [product.id, product.name]))
-  const selectedNames = [...selectedIds].map((id) => names.get(id) ?? id)
+  const byId = new Map(catalog.map((product) => [product.id, product]))
+  const supplier = suppliers.find((entry) => entry.id === filters.supplier) ?? null
+
+
+  const supplies = (id) => (
+    supplier === null || (byId.get(id)?.supplierIds ?? []).includes(supplier.id)
+  )
+  const eligibleIds = [...selectedIds].filter(supplies)
+  const excludedNames = [...selectedIds]
+    .filter((id) => !supplies(id))
+    .map((id) => byId.get(id)?.name ?? id)
+  const eligibleNames = eligibleIds.map((id) => byId.get(id)?.name ?? id)
 
   function toggleProduct(id) {
     setSelectedIds((previous) => {
@@ -47,52 +54,62 @@ export default function RestockPage({ catalog, suppliers }) {
     setFormError('')
   }
 
+  function handleSupplierChange(value) {
+    filters.setSupplier(value)
+    setFormError('')
+  }
+
   function handleCreateForm() {
-    if (selectedIds.size === 0) {
+    if (eligibleIds.length === 0) {
       setFormError('Оберіть хоча б один товар для форми.')
       return
     }
-    if (supplierId === '') {
-      setFormError('Оберіть постачальника форми.')
-      supplierRef.current?.focus()
-      return
-    }
     setFormError('')
-    const search = new URLSearchParams({
-      supplier: supplierId,
-      products: [...selectedIds].join(','),
-    })
-    navigate(`/orders/new?${search}`)
+    const params = new URLSearchParams(
+      supplier
+        ? { supplier: supplier.id, products: eligibleIds.join(',') }
+        : { products: eligibleIds.join(',') },
+    )
+    navigate(`/orders/new?${params}`)
   }
 
   return (
     <>
       <PageHeading title="Поповнення запасів" />
-      <p>
-        Дефіцит рахується від суми «наявно + замовлено», тож товар, який уже
-        замовлено, не з'явиться тут вдруге.
-      </p>
 
       <RestockFilters
         query={filters.query}
         show={filters.show}
         section={filters.section}
         category={filters.category}
+        supplier={filters.supplier}
         sections={sections}
         categories={categories}
+        suppliers={suppliers}
         canReset={filters.canReset}
         onQueryChange={filters.setQuery}
         onShowChange={filters.setShow}
         onSectionChange={filters.setSection}
         onCategoryChange={filters.setCategory}
+        onSupplierChange={handleSupplierChange}
         onReset={filters.resetFilters}
       />
 
       <div className="selection-panel">
         <p>
-          Обрано товарів: {selectedIds.size}
-          {selectedNames.length > 0 && <>. {selectedNames.join('; ')}</>}
+          {supplier
+            ? `Форма за постачальником «${supplier.name}»: показано лише його товари.`
+            : 'Форма без постачальника: можна обрати товари будь-яких постачальників.'}
         </p>
+        <p>
+          Обрано товарів: {eligibleIds.length}
+          {eligibleNames.length > 0 && <>. {eligibleNames.join('; ')}</>}
+        </p>
+        {excludedNames.length > 0 && (
+          <p className="field-hint">
+            Не потраплять до цієї форми, бо обраний постачальник їх не постачає: {excludedNames.join('; ')}
+          </p>
+        )}
         <p className="field-hint">
           Вибір зберігається, поки ви змінюєте умови відбору вище.
         </p>
@@ -114,28 +131,6 @@ export default function RestockPage({ catalog, suppliers }) {
             Очистити вибір
           </AppButton>
         </div>
-
-        <FormField
-          id="restock-supplier"
-          label="Постачальник форми"
-          hint="Один постачальник для всіх товарів форми."
-        >
-          <select
-            id="restock-supplier"
-            ref={supplierRef}
-            value={supplierId}
-            onChange={(event) => {
-              setSupplierId(event.target.value)
-              setFormError('')
-            }}
-            aria-describedby="restock-supplier-hint"
-          >
-            <option value="">Оберіть постачальника</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
-            ))}
-          </select>
-        </FormField>
 
         <AppButton onClick={handleCreateForm}>Створити форму замовлення</AppButton>
         {formError && <p className="form-alert" role="alert">{formError}</p>}
@@ -162,6 +157,7 @@ export default function RestockPage({ catalog, suppliers }) {
       ) : (
         <RestockTable
           products={filters.visibleProducts}
+          suppliers={suppliers}
           selectedIds={selectedIds}
           onToggle={toggleProduct}
         />

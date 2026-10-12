@@ -5,22 +5,65 @@ import useProductSelection from '../hooks/useProductSelection.js'
 import useOrders from '../hooks/useOrders.js'
 import OrderEditor from './OrderEditor.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
+import OrderFormCreatePage from './OrderFormCreatePage.jsx'
+import { parseIdList } from '../utils/parseIdList.js'
 
-export default function OrderCreatePage({ catalog }) {
+export default function OrderCreatePage({ catalog, suppliers }) {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { selectedId, clearSelection } = useProductSelection()
   const { createOrder } = useOrders()
   const productId = searchParams.get('productId')
   
-    if (searchParams.has('products')) {
+      if (searchParams.has('products')) {
+        const productIds = parseIdList(searchParams.get('products'))
+        const unknownIds = productIds.filter((id) => !catalog.some((item) => item.id === id))
+
+        if (productIds.length === 0 || unknownIds.length > 0) {
+          return (
+            <NotFoundPage
+              title="Неможливо підготувати форму"
+              message="Один чи кілька товарів із параметра products відсутні в каталозі."
+              backTo="/orders/restock"
+              backLabel="До списку поповнення"
+            />
+          )
+        }
+
+            // Форма може бути без постачальника; порожній параметр — те саме, що його відсутність.
+    const supplierParam = searchParams.get('supplier')
+    let supplier = null
+
+    if (supplierParam) {
+      supplier = suppliers.find((entry) => entry.id === supplierParam) ?? null
+      if (!supplier) {
+        return (
+          <NotFoundPage
+            title="Неможливо підготувати форму"
+            message="Постачальника з параметра supplier немає в довіднику."
+            backTo="/orders/restock"
+            backLabel="До списку поповнення"
+          />
+        )
+      }
+
+      const notSupplied = productIds
+        .map((id) => catalog.find((item) => item.id === id))
+        .filter((item) => !(item.supplierIds ?? []).includes(supplier.id))
+      if (notSupplied.length > 0) {
+        return (
+          <NotFoundPage
+            title="Неможливо підготувати форму"
+            message={`Постачальник «${supplier.name}» не постачає: ${notSupplied.map((item) => item.name).join('; ')}.`}
+            backTo={`/orders/restock?${new URLSearchParams({ supplier: supplier.id })}`}
+            backLabel="До списку поповнення"
+          />
+        )
+      }
+    }
+
     return (
-      <>
-        <PageHeading title="Нова форма замовлення" />
-        <EmptyState message="Майстер форми ще не підключено.">
-          <p><Link to="/orders/restock">Повернутися до списку поповнення</Link></p>
-        </EmptyState>
-      </>
+      <OrderFormCreatePage catalog={catalog} supplier={supplier} productIds={productIds} />
     )
   }
 
