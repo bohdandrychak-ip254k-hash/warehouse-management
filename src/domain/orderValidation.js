@@ -1,24 +1,30 @@
-export const ORDER_STATUSES = ['Нове', 'Надіслано', 'Отримано']
+export const ORDER_STATUS = {
+  new: 'Нове',
+  sent: 'Надіслано',
+  received: 'Отримано',
+}
+
+export const ORDER_KIND = {
+  single: 'single',
+  form: 'form',
+}
 
 export const ORDER_RULES = {
   quantityMin: 1,
   quantityMax: 1000,
-  supplierMin: 2,
-  supplierMax: 100,
   commentMax: 300,
   largeQuantity: 100,
   largeCommentMin: 10,
 }
 
-export function validateOrder(input, catalog) {
+export function validateOrderItem(input, products) {
   const rules = ORDER_RULES
   const errors = {}
-  const supplier = typeof input.supplier === 'string' ? input.supplier.trim() : ''
   const comment = typeof input.comment === 'string' ? input.comment.trim() : ''
   const quantityText = String(input.quantity ?? '').trim()
   const quantity = Number(quantityText)
 
-  if (!catalog.some((item) => item.id === input.productId)) {
+  if (!products.some((product) => product.id === input.productId)) {
     errors.productId = 'Виберіть наявний товар з каталогу.'
   }
 
@@ -30,12 +36,6 @@ export function validateOrder(input, catalog) {
     || quantity > rules.quantityMax
   ) {
     errors.quantity = `Кількість має бути цілим числом від ${rules.quantityMin} до ${rules.quantityMax}.`
-  }
-
-  if (supplier.length === 0) {
-    errors.supplier = 'Укажіть постачальника.'
-  } else if (supplier.length < rules.supplierMin || supplier.length > rules.supplierMax) {
-    errors.supplier = `Назва постачальника має містити від ${rules.supplierMin} до ${rules.supplierMax} символів без крайніх пробілів.`
   }
 
   if (comment.length > rules.commentMax) {
@@ -55,11 +55,61 @@ export function validateOrder(input, catalog) {
   return {
     ok: true,
     errors: {},
-    value: {
-      productId: input.productId,
-      quantity,
-      supplier,
-      comment,
-    },
+    value: { productId: input.productId, quantity, comment },
+  }
+}
+
+export function validateOrder(input, { products, suppliers }) {
+  const errors = {}
+  const itemErrors = {}
+  const kind = input.kind
+  const supplierId = input.supplierId ?? null
+  const rawItems = Array.isArray(input.items) ? input.items : []
+  const values = []
+
+  if (kind !== ORDER_KIND.single && kind !== ORDER_KIND.form) {
+    errors.kind = 'Невідомий тип замовлення.'
+  } else if (kind === ORDER_KIND.single) {
+    if (supplierId !== null) {
+      errors.supplierId = 'Просте замовлення створюється без постачальника.'
+    }
+    if (rawItems.length !== 1) {
+      errors.items = 'Просте замовлення має містити рівно один товар.'
+    }
+  } else {
+    if (!suppliers.some((supplier) => supplier.id === supplierId)) {
+      errors.supplierId = 'Виберіть постачальника зі списку.'
+    }
+    if (rawItems.length === 0) {
+      errors.items = 'Додайте до форми хоча б один товар.'
+    }
+  }
+
+  const seen = new Set()
+  rawItems.forEach((rawItem, index) => {
+    const result = validateOrderItem(rawItem ?? {}, products)
+    if (!result.ok) {
+      itemErrors[index] = result.errors
+    } else if (seen.has(result.value.productId)) {
+      itemErrors[index] = { productId: 'Цей товар уже є в замовленні.' }
+    } else {
+      seen.add(result.value.productId)
+      values.push(result.value)
+    }
+  })
+
+  if (Object.keys(itemErrors).length > 0 && !errors.items) {
+    errors.items = 'Виправте помилки в позиціях замовлення.'
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { ok: false, errors, itemErrors }
+  }
+
+  return {
+    ok: true,
+    errors: {},
+    itemErrors: {},
+    value: { kind, supplierId, items: values },
   }
 }

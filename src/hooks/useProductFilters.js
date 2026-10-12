@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router'
+import { isDeficit } from '../domain/stock.js'
 
 function readIds(searchParams, name) {
   const raw = searchParams.get(name) ?? ''
@@ -20,7 +21,7 @@ export default function useProductFilters(catalog) {
       normalizedQuery === '' ||
       item.name.toLocaleLowerCase('uk').includes(normalizedQuery) ||
       item.barcode.includes(normalizedQuery)
-    const matchesStock = !lowStockOnly || item.quantity <= 5
+    const matchesStock = !lowStockOnly || isDeficit(item)
     const matchesSection = selectedSectionIds.size === 0 || selectedSectionIds.has(item.sectionId)
     const matchesCategory = selectedCategoryIds.size === 0 || selectedCategoryIds.has(item.categoryId)
     return matchesQuery && matchesStock && matchesSection && matchesCategory

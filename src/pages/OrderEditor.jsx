@@ -5,10 +5,11 @@ import AppButton from '../components/ui/AppButton.jsx'
 import AvailabilityBadge from '../components/products/AvailabilityBadge.jsx'
 import OrderForm from '../components/orders/OrderForm.jsx'
 import OrderSummary from '../components/orders/OrderSummary.jsx'
-import { validateOrder } from '../domain/orderValidation.js'
+import { validateOrderItem } from '../domain/orderValidation.js'
 
-const emptyDraft = { quantity: '', supplier: '', comment: '' }
-const FIELD_ORDER = ['quantity', 'supplier', 'comment']
+
+const emptyDraft = { quantity: '', comment: '' }
+const FIELD_ORDER = ['quantity', 'comment']
 
 // Тимчасово: до кроку 5 збереження не підключене, тому відмова чесна.
 const notConnected = () => ({ ok: false, message: 'Збереження ще не підключено.' })
@@ -24,7 +25,6 @@ export default function OrderEditor({
 }) {
   const initialValues = {
     quantity: String(initialDraft.quantity),
-    supplier: initialDraft.supplier,
     comment: initialDraft.comment,
   }
   const [draft, setDraft] = useState(() => ({ ...initialValues }))
@@ -32,7 +32,7 @@ export default function OrderEditor({
   const [attempted, setAttempted] = useState(false)
   const [operationError, setOperationError] = useState('')
 
-  const validation = validateOrder({ ...draft, productId: product.id }, [product])
+  const validation = validateOrderItem({ ...draft, productId: product.id }, [product])
   const errors = Object.fromEntries(
     Object.entries(validation.errors).filter(([field]) => (
       attempted || touched[field]

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { OrdersContext } from '../context/OrdersContext.js'
 import { orders as initialOrders } from '../data/orders.js'
-import { validateOrder } from '../domain/orderValidation.js'
+import { ORDER_STATUS, validateOrder } from '../domain/orderValidation.js'
 
 function todayIso() {
   const now = new Date()
@@ -21,10 +21,12 @@ function formatOrderId(number) {
   return `ord-${String(number).padStart(3, '0')}`
 }
 
-export default function OrdersProvider({ items, children }) {
-  const [orders, setOrders] = useState(() => (
-    initialOrders.map((order) => ({ ...order }))
-  ))
+function copyOrder(order) {
+  return { ...order, items: order.items.map((item) => ({ ...item })) }
+}
+
+export default function OrdersProvider({ items, suppliers, children }) {
+  const [orders, setOrders] = useState(() => initialOrders.map(copyOrder))
   const [notice, setNotice] = useState('')
   // Лічильник тільки зростає: номер видаленого замовлення не видається вдруге.
   const lastNumber = useRef(null)
@@ -33,7 +35,7 @@ export default function OrdersProvider({ items, children }) {
   }
 
   function createOrder(input) {
-    const validation = validateOrder(input, items)
+    const validation = validateOrder(input, { products: items, suppliers })
     if (!validation.ok) {
       return validation
     }
@@ -43,20 +45,24 @@ export default function OrdersProvider({ items, children }) {
       ...validation.value,
       id: formatOrderId(lastNumber.current),
       date: todayIso(),
-      status: 'Нове',
+      status: ORDER_STATUS.new,
     }
     setOrders((previous) => [...previous, record])
     setNotice('Замовлення створено в поточній локальній колекції.')
     return { ok: true, record }
   }
 
+  // Тип і постачальник замовлення не змінюються: оновлюються лише позиції.
   function updateOrder(id, input) {
     const current = orders.find((order) => order.id === id)
     if (!current) {
       return { ok: false, message: 'Замовлення для оновлення не знайдено.' }
     }
 
-    const validation = validateOrder(input, items)
+    const validation = validateOrder(
+      { kind: current.kind, supplierId: current.supplierId, items: input.items },
+      { products: items, suppliers },
+    )
     if (!validation.ok) {
       return validation
     }

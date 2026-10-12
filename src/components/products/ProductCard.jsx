@@ -10,8 +10,9 @@ export default function ProductCard({ item, selected, onSelect }) {
       <h3>{item.name}</h3>
       <p className="path">{item.sectionName} / {item.categoryName}</p>
       <p className="barcode">Штрихкод: {item.barcode}</p>
-      <p>Кількість: {item.quantity} {item.unit}</p>
-      <AvailabilityBadge quantity={item.quantity} />
+      <p>Наявно: {item.quantity} {item.unit}</p>
+      <p>Замовлено: {item.ordered ?? 0} {item.unit}</p>
+      <AvailabilityBadge quantity={item.quantity} ordered={item.ordered} />
 
       <div className="card-actions">
         <Link to={`/products/${item.id}`} className="app-button app-button-secondary">

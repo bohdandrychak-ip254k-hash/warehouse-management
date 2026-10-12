@@ -1,13 +1,22 @@
 import useOrders from './useOrders.js'
 
+function describeOrder(order, products) {
+  const names = order.items.map((item) => (
+    products.find((product) => product.id === item.productId)?.name ?? item.productId
+  ))
+
+  if (order.kind === 'form') {
+    return `форму ${order.id} (${names.map((name) => `«${name}»`).join(', ')})`
+  }
+  return `замовлення ${order.id} на «${names[0]}»`
+}
+
 export default function useDeleteOrder(items) {
   const { deleteOrder } = useOrders()
 
   return function deleteWithConfirmation(order) {
-    const item = items.find((entry) => entry.id === order.productId)
-    const name = item?.name ?? order.productId
     const confirmed = window.confirm(
-      `Видалити замовлення ${order.id} на «${name}»? `
+      `Видалити ${describeOrder(order, items)}? `
       + 'Запис буде вилучено з поточної локальної колекції. '
       + 'Скасування видалення не передбачено.',
     )

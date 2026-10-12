@@ -16,15 +16,15 @@ export default function ProductDetailsPage({ catalog }) {
   const product = catalog.find((item) => item.id === productId)
 
   if (!product) {
-  return (
-    <NotFoundPage
-      title="Товар не знайдено"
-      message={`У каталозі немає товару з ідентифікатором «${productId}».`}
-      backTo="/products"
-      backLabel="Повернутися до каталогу"
-    />
-  )
-}
+    return (
+      <NotFoundPage
+        title="Товар не знайдено"
+        message={`У каталозі немає товару з ідентифікатором «${productId}».`}
+        backTo="/products"
+        backLabel="Повернутися до каталогу"
+      />
+    )
+  }
 
   const productSales = sales.filter((sale) => sale.productId === product.id)
 
@@ -44,8 +44,10 @@ export default function ProductDetailsPage({ catalog }) {
         <div>
           <p className="path">{product.sectionName} / {product.categoryName}</p>
           <p className="barcode">Штрихкод: {product.barcode}</p>
-          <p>Кількість: {product.quantity} {product.unit}</p>
-          <AvailabilityBadge quantity={product.quantity} />
+          <p>Наявно: {product.quantity} {product.unit}</p>
+          <p>Замовлено: {product.ordered ?? 0} {product.unit}</p>
+          <p>Разом: {product.quantity + (product.ordered ?? 0)} {product.unit}</p>
+          <AvailabilityBadge quantity={product.quantity} ordered={product.ordered} />
           <AppButton onClick={handlePrepareOrder}>Підготувати замовлення</AppButton>
         </div>
       </div>

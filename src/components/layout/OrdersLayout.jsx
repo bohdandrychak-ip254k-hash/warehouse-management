@@ -10,7 +10,7 @@ export default function OrdersLayout() {
     <>
       <nav className="subnav" aria-label="Навігація розділом замовлень">
         <NavLink to="/orders" end className={linkClass}>Список замовлень</NavLink>
-        <NavLink to="/orders/new" className={linkClass}>Нове замовлення</NavLink>
+        <NavLink to="/orders/restock" className={linkClass}>Поповнення</NavLink>
       </nav>
       <p className="local-note">Локальні дані зберігаються до перезавантаження сторінки.</p>
       <OrderNotice />

@@ -20,7 +20,21 @@ export default function OrderEditPage({ catalog }) {
     )
   }
 
-  const product = catalog.find((entry) => entry.id === order.productId)
+  const detailsPath = `/orders/${encodeURIComponent(order.id)}`
+
+  if (order.kind === 'form') {
+    return (
+      <NotFoundPage
+        title="Редагування форми ще недоступне"
+        message="Редагування замовлень-форм буде додано на наступному етапі."
+        backTo={detailsPath}
+        backLabel="До замовлення"
+      />
+    )
+  }
+
+  const item = order.items[0]
+  const product = catalog.find((entry) => entry.id === item.productId)
 
   if (!product) {
     return (
@@ -33,10 +47,8 @@ export default function OrderEditPage({ catalog }) {
     )
   }
 
-  const detailsPath = `/orders/${encodeURIComponent(order.id)}`
-
   function handleSave(input) {
-    const result = updateOrder(order.id, input)
+    const result = updateOrder(order.id, { items: [input] })
     if (result.ok) {
       navigate(`/orders/${encodeURIComponent(result.record.id)}`, { replace: true })
     }
@@ -49,9 +61,8 @@ export default function OrderEditPage({ catalog }) {
       title={`Редагування замовлення ${order.id}`}
       product={product}
       initialDraft={{
-        quantity: String(order.quantity),
-        supplier: order.supplier,
-        comment: order.comment,
+        quantity: String(item.quantity),
+        comment: item.comment,
       }}
       onSave={handleSave}
       submitLabel="Зберегти зміни"

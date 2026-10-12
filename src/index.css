@@ -772,3 +772,117 @@ main h1 {
   color: #176139;
   font-weight: 600;
 }
+.order-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-block: 1rem;
+}
+.order-filters .form-field {
+  margin-block: 0;
+}
+.form-field select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #CCE1EF;
+  border-radius: 0.375rem;
+  font: inherit;
+  background: white;
+}
+select:focus-visible {
+  outline: 3px solid #1B5B7E;
+  outline-offset: 2px;
+}
+.status.incoming {
+  color: #1B5B7E;
+}
+.stock-warning {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #9a6400;
+  background: #fdf3df;
+  color: #6b4500;
+  font-weight: 600;
+}
+.order-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.order-items li + li {
+  margin-top: 0.25rem;
+}
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+.items-table caption {
+  text-align: left;
+  padding: 0.5rem 0;
+  color: #455b6b;
+  font-size: 0.9rem;
+}
+.items-table th,
+.items-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #CCE1EF;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.items-table th {
+  background: #E8F5FD;
+  color: #1B5B7E;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.selection-panel {
+  margin-block: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #CCE1EF;
+  border-radius: 0.5rem;
+}
+.selection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+.restock-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+.restock-table caption {
+  text-align: left;
+  padding: 0.5rem 0;
+  color: #455b6b;
+  font-size: 0.9rem;
+}
+.restock-table th,
+.restock-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #CCE1EF;
+  text-align: left;
+  vertical-align: top;
+}
+.restock-table th {
+  background: #E8F5FD;
+  color: #1B5B7E;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.restock-table .status {
+  margin: 0;
+}
+.restock-table .path {
+  margin: 0.15rem 0 0;
+}
+.row-selected {
+  background: #E8F5FD;
+}

@@ -20,12 +20,11 @@ export default function OrderForm({
 }) {
   const nameId = `${idPrefix}-name`
   const quantityId = `${idPrefix}-quantity`
-  const supplierId = `${idPrefix}-supplier`
   const commentId = `${idPrefix}-comment`
   const hasErrors = Object.keys(errors).length > 0
 
   return (
-    <form noValidate onSubmit={onSubmit} aria-label="Форма замовлення постачальнику">
+    <form noValidate onSubmit={onSubmit} aria-label="Форма замовлення товару">
       <p>
         Збережіть зміни кнопкою нижче. Незбережене введення зникає при виході
         зі сторінки або її перезавантаженні.
@@ -57,25 +56,6 @@ export default function OrderForm({
           onBlur={() => onBlur('quantity')}
           aria-invalid={Boolean(errors.quantity)}
           aria-describedby={describedBy(quantityId, errors.quantity)}
-        />
-      </FormField>
-
-      <FormField
-        id={supplierId}
-        label="Постачальник (обов'язково)"
-        hint={`Від ${ORDER_RULES.supplierMin} до ${ORDER_RULES.supplierMax} символів без крайніх пробілів.`}
-        error={errors.supplier}
-      >
-        <input
-          id={supplierId}
-          name="supplier"
-          type="text"
-          required
-          value={draft.supplier}
-          onChange={(event) => onChange('supplier', event.target.value)}
-          onBlur={() => onBlur('supplier')}
-          aria-invalid={Boolean(errors.supplier)}
-          aria-describedby={describedBy(supplierId, errors.supplier)}
         />
       </FormField>
 

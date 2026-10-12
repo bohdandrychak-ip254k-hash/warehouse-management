@@ -12,6 +12,17 @@ export default function OrderCreatePage({ catalog }) {
   const { selectedId, clearSelection } = useProductSelection()
   const { createOrder } = useOrders()
   const productId = searchParams.get('productId')
+  
+    if (searchParams.has('products')) {
+    return (
+      <>
+        <PageHeading title="Нова форма замовлення" />
+        <EmptyState message="Майстер форми ще не підключено.">
+          <p><Link to="/orders/restock">Повернутися до списку поповнення</Link></p>
+        </EmptyState>
+      </>
+    )
+  }
 
   if (productId === null) {
     const lastSelectionSearch = selectedId
@@ -22,6 +33,8 @@ export default function OrderCreatePage({ catalog }) {
       <>
         <PageHeading title="Нове замовлення" />
         <EmptyState message="Спочатку виберіть товар.">
+          <p><Link to="/orders/restock">Відкрити список поповнення</Link></p>
+          <p><Link to="/products">Відкрити каталог</Link></p>
           <p><Link to="/products">Відкрити каталог</Link></p>
           {lastSelectionSearch && (
             <p>
@@ -47,7 +60,7 @@ export default function OrderCreatePage({ catalog }) {
   }
 
   function handleSave(input) {
-    const result = createOrder(input)
+    const result = createOrder({ kind: 'single', supplierId: null, items: [input] })
     if (result.ok) {
       navigate(`/orders/${encodeURIComponent(result.record.id)}`, { replace: true })
     }

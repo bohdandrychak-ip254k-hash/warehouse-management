@@ -1,11 +1,12 @@
 import { Link } from 'react-router'
 import PageHeading from '../components/ui/PageHeading.jsx'
 import FeatureCard from '../components/home/FeatureCard.jsx'
-import { products, sections, categories } from '../data/products.js'
+import { sections, categories } from '../data/products.js'
+import { isDeficit } from '../domain/stock.js'
 
-export default function WelcomePage() {
-  const totalProducts = products.length
-  const lowStockCount = products.filter((p) => p.quantity <= 5).length
+export default function WelcomePage({ catalog }) {
+  const totalProducts = catalog.length
+  const lowStockCount = catalog.filter(isDeficit).length
 
   return (
     <>

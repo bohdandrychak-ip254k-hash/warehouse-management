@@ -7,8 +7,6 @@ export default function OrderSummary({ productName, draft }) {
         <dd>{productName}</dd>
         <dt>Кількість</dt>
         <dd>{draft.quantity || 'Ще не вказано'}</dd>
-        <dt>Постачальник</dt>
-        <dd>{draft.supplier.trim() || 'Ще не вказано'}</dd>
         <dt>Коментар</dt>
         <dd>{draft.comment.trim() || 'Немає'}</dd>
       </dl>
