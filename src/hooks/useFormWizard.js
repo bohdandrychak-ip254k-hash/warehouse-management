@@ -10,7 +10,23 @@ import {
 const EMPTY_DRAFT = { quantity: '', comment: '' }
 
 function toDraft(entry) {
-  return { quantity: String(entry.quantity), comment: entry.comment }
+  const draft = { quantity: String(entry.quantity), comment: entry.comment }
+  if (Object.hasOwn(entry, 'supplierId')) {
+    draft.supplierId = entry.supplierId ?? ''
+  }
+  return draft
+}
+
+function sameDraft(a, b) {
+  return a.quantity === b.quantity
+    && a.comment === b.comment
+    && (a.supplierId ?? '') === (b.supplierId ?? '')
+}
+
+function sameEntry(a, b) {
+  return a.quantity === b.quantity
+    && a.comment === b.comment
+    && (a.supplierId ?? null) === (b.supplierId ?? null)
 }
 
 function without(object, key) {
@@ -19,22 +35,26 @@ function without(object, key) {
   return next
 }
 
-export default function useFormWizard(initialQueue, initialEntries = {}) {
+export default function useFormWizard(initialQueue, initialEntries = {}, defaultDraftFor = () => EMPTY_DRAFT) {
+  const [initial] = useState(() => ({ queue: [...initialQueue], entries: { ...initialEntries } }))
   const [wizard, setWizard] = useState(() => createWizard(initialQueue, initialEntries))
   // Незбережений текст кожного товару окремо: перехід до іншого товару його не стирає.
   const [drafts, setDrafts] = useState({})
   const [moved, setMoved] = useState(false)
 
   const initialDraftFor = (id) => (
-    Object.hasOwn(wizard.entries, id) ? toDraft(wizard.entries[id]) : EMPTY_DRAFT
+    Object.hasOwn(wizard.entries, id) ? toDraft(wizard.entries[id]) : defaultDraftFor(id)
   )
   const draftFor = (id) => drafts[id] ?? initialDraftFor(id)
-  const isDirty = (id) => {
-    const draft = draftFor(id)
-    const initial = initialDraftFor(id)
-    return draft.quantity !== initial.quantity || draft.comment !== initial.comment
-  }
-  const hasProgress = Object.keys(wizard.entries).length > 0 || wizard.queue.some((id) => isDirty(id))
+  const isDirty = (id) => !sameDraft(draftFor(id), initialDraftFor(id))
+  const sameQueue = wizard.queue.length === initial.queue.length
+    && wizard.queue.every((id, index) => id === initial.queue[index])
+  const sameEntries = Object.keys(wizard.entries).length === Object.keys(initial.entries).length
+    && Object.entries(wizard.entries).every(([id, entry]) => (
+      Object.hasOwn(initial.entries, id) && sameEntry(initial.entries[id], entry)
+    ))
+  // Зміни порівнюються з початковим станом: відкрита для редагування форма без правок — не «змінена».
+  const hasChanges = !sameQueue || !sameEntries || wizard.queue.some((id) => isDirty(id))
 
   function changeDraft(id, field, value) {
     setDrafts((previous) => ({
@@ -76,7 +96,7 @@ export default function useFormWizard(initialQueue, initialEntries = {}) {
     moved,
     draftFor,
     isDirty,
-    hasProgress,
+    hasChanges,
     changeDraft,
     resetDraft,
     save,

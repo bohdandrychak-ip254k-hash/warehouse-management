@@ -32,10 +32,12 @@ export default function OrderTable({ orders, items, suppliers, onDelete }) {
                 <td>
                   <ul className="order-items">
                     {order.items.map((item) => {
-                      const product = items.find((entry) => entry.id === item.productId)
+                                            const product = items.find((entry) => entry.id === item.productId)
+                      const itemSupplier = suppliers.find((entry) => entry.id === item.supplierId)
                       return (
                         <li key={item.productId}>
                           {product?.name ?? 'Товар відсутній у каталозі'} — {item.quantity} {product?.unit ?? ''}
+                          {itemSupplier && ` · ${itemSupplier.name}`}
                         </li>
                       )
                     })}
@@ -52,7 +54,7 @@ export default function OrderTable({ orders, items, suppliers, onDelete }) {
                     >
                       Переглянути
                     </Link>
-                    {order.kind === 'single' && (
+                    
                       <Link
                         to={`${path}/edit`}
                         className="app-button app-button-secondary app-button-small"
@@ -60,7 +62,7 @@ export default function OrderTable({ orders, items, suppliers, onDelete }) {
                       >
                         Редагувати
                       </Link>
-                    )}
+
                     <AppButton
                       variant="danger"
                       size="small"

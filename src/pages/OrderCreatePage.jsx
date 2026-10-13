@@ -4,9 +4,9 @@ import EmptyState from '../components/ui/EmptyState.jsx'
 import useProductSelection from '../hooks/useProductSelection.js'
 import useOrders from '../hooks/useOrders.js'
 import OrderEditor from './OrderEditor.jsx'
-import NotFoundPage from './NotFoundPage.jsx'
 import OrderFormCreatePage from './OrderFormCreatePage.jsx'
 import { parseIdList } from '../utils/parseIdList.js'
+import NotFoundPage from './NotFoundPage.jsx'
 
 export default function OrderCreatePage({ catalog, suppliers }) {
   const [searchParams] = useSearchParams()
@@ -14,23 +14,23 @@ export default function OrderCreatePage({ catalog, suppliers }) {
   const { selectedId, clearSelection } = useProductSelection()
   const { createOrder } = useOrders()
   const productId = searchParams.get('productId')
-  
-      if (searchParams.has('products')) {
-        const productIds = parseIdList(searchParams.get('products'))
-        const unknownIds = productIds.filter((id) => !catalog.some((item) => item.id === id))
 
-        if (productIds.length === 0 || unknownIds.length > 0) {
-          return (
-            <NotFoundPage
-              title="Неможливо підготувати форму"
-              message="Один чи кілька товарів із параметра products відсутні в каталозі."
-              backTo="/orders/restock"
-              backLabel="До списку поповнення"
-            />
-          )
-        }
+  if (searchParams.has('products')) {
+    const productIds = parseIdList(searchParams.get('products'))
+    const unknownIds = productIds.filter((id) => !catalog.some((item) => item.id === id))
 
-            // Форма може бути без постачальника; порожній параметр — те саме, що його відсутність.
+    if (productIds.length === 0 || unknownIds.length > 0) {
+      return (
+        <NotFoundPage
+          title="Неможливо підготувати форму"
+          message="Один чи кілька товарів із параметра products відсутні в каталозі."
+          backTo="/orders/restock"
+          backLabel="До списку поповнення"
+        />
+      )
+    }
+
+    // Форма може бути без постачальника; порожній параметр — те саме, що його відсутність.
     const supplierParam = searchParams.get('supplier')
     let supplier = null
 
@@ -63,7 +63,12 @@ export default function OrderCreatePage({ catalog, suppliers }) {
     }
 
     return (
-      <OrderFormCreatePage catalog={catalog} supplier={supplier} productIds={productIds} />
+      <OrderFormCreatePage
+        catalog={catalog}
+        suppliers={suppliers}
+        supplier={supplier}
+        productIds={productIds}
+      />
     )
   }
 
@@ -77,7 +82,6 @@ export default function OrderCreatePage({ catalog, suppliers }) {
         <PageHeading title="Нове замовлення" />
         <EmptyState message="Спочатку виберіть товар.">
           <p><Link to="/orders/restock">Відкрити список поповнення</Link></p>
-          <p><Link to="/products">Відкрити каталог</Link></p>
           <p><Link to="/products">Відкрити каталог</Link></p>
           {lastSelectionSearch && (
             <p>
@@ -120,6 +124,7 @@ export default function OrderCreatePage({ catalog, suppliers }) {
       key={`new-${product.id}`}
       title="Нове замовлення"
       product={product}
+      otherOrdered={product.ordered}
       onSave={handleSave}
       submitLabel="Створити замовлення"
       onCancel={handleCancel}

@@ -3,12 +3,13 @@ import AppButton from '../ui/AppButton.jsx'
 import AvailabilityBadge from '../products/AvailabilityBadge.jsx'
 import OrderForm from './OrderForm.jsx'
 import FocusHeading from './FocusHeading.jsx'
-import { validateOrderItem } from '../../domain/orderValidation.js'
-
-const FIELD_ORDER = ['quantity', 'comment']
+import { validateFormItem } from '../../domain/orderValidation.js'
 
 export default function FormItemStep({
   product,
+  otherOrdered,
+  perItemSupplier = false,
+  suppliers = [],
   position,
   total,
   draft,
@@ -23,7 +24,13 @@ export default function FormItemStep({
   const [touched, setTouched] = useState({})
   const [attempted, setAttempted] = useState(false)
 
-  const validation = validateOrderItem({ ...draft, productId: product.id }, [product])
+  const fieldOrder = perItemSupplier ? ['supplierId', 'quantity', 'comment'] : ['quantity', 'comment']
+  const supplierOptions = perItemSupplier
+    ? (product.supplierIds ?? [])
+      .map((id) => suppliers.find((entry) => entry.id === id))
+      .filter(Boolean)
+    : []
+  const validation = validateFormItem(draft, product, { perItemSupplier, suppliers })
   const errors = Object.fromEntries(
     Object.entries(validation.errors).filter(([field]) => attempted || touched[field]),
   )
@@ -34,7 +41,7 @@ export default function FormItemStep({
     setAttempted(true)
 
     if (!validation.ok) {
-      const firstField = FIELD_ORDER.find((field) => validation.errors[field])
+      const firstField = fieldOrder.find((field) => validation.errors[field])
       if (firstField) {
         event.currentTarget.elements.namedItem(firstField)?.focus()
       }
@@ -65,11 +72,15 @@ export default function FormItemStep({
         Наявно: {product.quantity} {product.unit}, замовлено {ordered} {product.unit}
       </p>
       <AvailabilityBadge quantity={product.quantity} ordered={ordered} />
-      {ordered > 0 && (
+      {otherOrdered > 0 && (
         <p className="stock-warning" role="note">
-          Увага: на цей товар уже є незавершені замовлення на {ordered} {product.unit}.
+          Увага: на цей товар уже є незавершені замовлення на {otherOrdered} {product.unit}.
           Перевірте, чи потрібно замовляти ще.
         </p>
+      )}
+
+      {perItemSupplier && supplierOptions.length === 0 && (
+        <p className="field-hint">Для цього товару постачальників не вказано.</p>
       )}
 
       <OrderForm
@@ -83,6 +94,7 @@ export default function FormItemStep({
         onSubmit={handleSubmit}
         onReset={handleReset}
         submitLabel={submitLabel}
+        supplierField={supplierOptions.length > 0 ? { options: supplierOptions } : null}
       />
 
       <AppButton variant="secondary" onClick={onRemove}>

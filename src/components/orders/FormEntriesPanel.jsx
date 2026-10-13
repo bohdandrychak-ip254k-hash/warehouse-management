@@ -9,13 +9,14 @@ export default function FormEntriesPanel({ entries, total, pendingNames, onEdit,
         <p>Поки що нічого не внесено.</p>
       ) : (
         <ul className="wizard-entries">
-          {entries.map(({ product, entry, isCurrent }) => (
+          {entries.map(({ product, entry, isCurrent, supplierName }) => (
             <li
               key={product.id}
               className={isCurrent ? 'wizard-entry wizard-entry-current' : 'wizard-entry'}
             >
               <strong>{product.name}</strong>
               <p>{entry.quantity} {product.unit}</p>
+              {supplierName && <p className="field-hint">Постачальник: {supplierName}</p>}
               {entry.comment && <p className="field-hint">{entry.comment}</p>}
               <div className="wizard-entry-actions">
                 <AppButton

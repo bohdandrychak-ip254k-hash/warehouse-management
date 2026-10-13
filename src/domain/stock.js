@@ -2,16 +2,17 @@ import { ORDER_STATUS } from './orderValidation.js'
 
 export const LOW_STOCK_THRESHOLD = 5
 
-// Замовлення «в дорозі». Статус «Отримано» вже входить до наявної кількості.
+
 const IN_TRANSIT = [ORDER_STATUS.new, ORDER_STATUS.sent]
+export function isInTransit(order) {
+  return IN_TRANSIT.includes(order.status)
+}
 
 export function orderedByProduct(orders) {
   const ordered = new Map()
 
     for (const order of orders) {
-        if (!IN_TRANSIT.includes(order.status)) {
-        continue
-        }
+        if (!isInTransit(order)) { continue }
         for (const item of order.items) {
         ordered.set(item.productId, (ordered.get(item.productId) ?? 0) + item.quantity)
         }

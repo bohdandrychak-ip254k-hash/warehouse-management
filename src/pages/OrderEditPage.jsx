@@ -2,8 +2,9 @@ import { useNavigate, useParams } from 'react-router'
 import useOrders from '../hooks/useOrders.js'
 import OrderEditor from './OrderEditor.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
+import OrderFormEditPage from './OrderFormEditPage.jsx'
 
-export default function OrderEditPage({ catalog }) {
+export default function OrderEditPage({ catalog, suppliers }) {
   const { orderId } = useParams()
   const navigate = useNavigate()
   const { orders, updateOrder } = useOrders()
@@ -22,15 +23,8 @@ export default function OrderEditPage({ catalog }) {
 
   const detailsPath = `/orders/${encodeURIComponent(order.id)}`
 
-  if (order.kind === 'form') {
-    return (
-      <NotFoundPage
-        title="Редагування форми ще недоступне"
-        message="Редагування замовлень-форм буде додано на наступному етапі."
-        backTo={detailsPath}
-        backLabel="До замовлення"
-      />
-    )
+    if (order.kind === 'form') {
+    return <OrderFormEditPage order={order} catalog={catalog} suppliers={suppliers} />
   }
 
   const item = order.items[0]

@@ -51,7 +51,7 @@ function AppRoutes({ baseCatalog }) {
           <Route path="new" element={<OrderCreatePage catalog={catalog} suppliers={suppliers} />} />
           <Route path="restock" element={<RestockPage catalog={catalog} suppliers={suppliers} />} />
           <Route path=":orderId" element={<OrderDetailsPage catalog={catalog} suppliers={suppliers} />} />
-          <Route path=":orderId/edit" element={<OrderEditPage catalog={catalog} />} />
+          <Route path=":orderId/edit" element={<OrderEditPage catalog={catalog} suppliers={suppliers} />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

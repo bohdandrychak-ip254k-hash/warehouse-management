@@ -17,7 +17,9 @@ export default function OrderForm({
   onSubmit,
   onReset,
   submitLabel,
+  supplierField = null,
 }) {
+  const supplierId = `${idPrefix}-supplier`
   const nameId = `${idPrefix}-name`
   const quantityId = `${idPrefix}-quantity`
   const commentId = `${idPrefix}-comment`
@@ -37,6 +39,31 @@ export default function OrderForm({
         <input id={nameId} name="productName" value={productName} readOnly />
       </FormField>
 
+      {supplierField && (
+        <FormField
+          id={supplierId}
+          label="Постачальник (обов'язково)"
+          hint="Оберіть, у кого замовити цей товар."
+          error={errors.supplierId}
+        >
+          <select
+            id={supplierId}
+            name="supplierId"
+            required
+            value={draft.supplierId ?? ''}
+            onChange={(event) => onChange('supplierId', event.target.value)}
+            onBlur={() => onBlur('supplierId')}
+            aria-invalid={Boolean(errors.supplierId)}
+            aria-describedby={describedBy(supplierId, errors.supplierId)}
+          >
+            <option value="">Оберіть постачальника</option>
+            {supplierField.options.map((option) => (
+              <option key={option.id} value={option.id}>{option.name}</option>
+            ))}
+          </select>
+        </FormField>
+      )}
+
       <FormField
         id={quantityId}
         label="Кількість до замовлення (обов'язково)"
@@ -46,10 +73,10 @@ export default function OrderForm({
         <input
           id={quantityId}
           name="quantity"
-          type="number"
-          min={ORDER_RULES.quantityMin}
-          max={ORDER_RULES.quantityMax}
-          step={1}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="off"
           required
           value={draft.quantity}
           onChange={(event) => onChange('quantity', event.target.value)}

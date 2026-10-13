@@ -28,6 +28,7 @@ export default function OrderDetailsPage({ catalog, suppliers }) {
   }
 
   const supplier = findSupplier(order, suppliers)
+  const perItemSupplier = order.kind === 'form' && order.supplierId === null
 
   function handleDelete() {
     setError('')
@@ -68,6 +69,7 @@ export default function OrderDetailsPage({ catalog, suppliers }) {
             <tr>
               <th scope="col">Товар</th>
               <th scope="col">Кількість</th>
+              {perItemSupplier && <th scope="col">Постачальник</th>}
               <th scope="col">Коментар</th>
             </tr>
           </thead>
@@ -78,6 +80,9 @@ export default function OrderDetailsPage({ catalog, suppliers }) {
                 <tr key={item.productId}>
                   <td>{product?.name ?? 'Товар відсутній у каталозі'}</td>
                   <td>{item.quantity} {product?.unit ?? ''}</td>
+                  {perItemSupplier && (
+                    <td>{suppliers.find((entry) => entry.id === item.supplierId)?.name ?? '—'}</td>
+                  )}
                   <td>{item.comment || '—'}</td>
                 </tr>
               )
@@ -90,13 +95,11 @@ export default function OrderDetailsPage({ catalog, suppliers }) {
         Замовлення існує лише в пам'яті застосунку й не надсилається
         постачальнику.
       </p>
-      {order.kind === 'single' && (
-        <p>
-          <Link to={`/orders/${encodeURIComponent(order.id)}/edit`}>
-            Редагувати замовлення
-          </Link>
-        </p>
-      )}
+      <p>
+        <Link to={`/orders/${encodeURIComponent(order.id)}/edit`}>
+          Редагувати замовлення
+        </Link>
+      </p>
       <AppButton variant="secondary" onClick={handleDelete}>
         Видалити замовлення
       </AppButton>

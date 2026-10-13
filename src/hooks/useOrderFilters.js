@@ -24,7 +24,11 @@ export default function useOrderFilters(orders, items, suppliers) {
       order.id,
       KIND_LABEL[order.kind],
       findSupplier(order, suppliers)?.name ?? '',
-      ...order.items.map((item) => `${names.get(item.productId) ?? ''} ${item.comment}`),
+            ...order.items.map((item) => [
+        names.get(item.productId) ?? '',
+        item.comment,
+        suppliers.find((entry) => entry.id === item.supplierId)?.name ?? '',
+      ].join(' ')),
     ]
       .join(' ')
       .toLocaleLowerCase('uk')
